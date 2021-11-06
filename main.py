@@ -24,12 +24,21 @@ playerXChange = 0
 playerXSpeed = 2
 
 # enemy
-enemyImage = pygame.image.load("enemy.png")
-enemyX = random.randint(0, 736)
-enemyY = random.randint(0, 100)
-enemyXChange = 1
+# enemies
+enemiesImage = []
+enemiesX = []
+enemiesY = []
+enemiesXChange = []
+numOfEnemies = 6
 enemyXSpeed = 2
 enemyYSpeed = 20
+
+for i in range(numOfEnemies):
+    enemiesImage.append(pygame.image.load("enemy.png"))
+    enemiesX.append(random.randint(0, 736))
+    enemiesY.append(random.randint(0, 100))
+    enemiesXChange.append(1)
+
 
 # bullet
 bulletImage = pygame.image.load("bullet.png")
@@ -46,8 +55,8 @@ def player(x, y):
     screen.blit(playerImage, (x, y))
 
 
-def enemy(x, y):
-    screen.blit(enemyImage, (x, y))
+def enemy(x, y, i):
+    screen.blit(enemiesImage[i], (x, y))
 
 
 def fireBullet(x, y):
@@ -107,22 +116,23 @@ while running:
         bulletY -= bulletYSpeed
 
     # move enemy
-    if enemyX <= 0:
-        enemyXChange = enemyXSpeed
-        enemyY += enemyYSpeed
-    if enemyX >= 736:
-        enemyXChange = -enemyXSpeed
-        enemyY += enemyYSpeed
-    enemyX += enemyXChange
-    enemy(enemyX, enemyY)
+    for i in range(numOfEnemies):
+        if enemiesX[i] <= 0:
+            enemiesXChange[i] = enemyXSpeed
+            enemiesY[i] += enemyYSpeed
+        if enemiesX[i] >= 736:
+            enemiesXChange[i] = -enemyXSpeed
+            enemiesY[i] += enemyYSpeed
+        enemiesX[i] += enemiesXChange[i]
+        enemy(enemiesX[i], enemiesY[i], i)
 
-    # detect collision
-    collision = isCollision(enemyX, enemyY, bulletX, bulletY)
-    if collision:
-        bulletState = "ready"
-        bulletY = 480
-        score += 1
-        print(score)
-        enemyX = random.randint(0, 736)
-        enemyY = random.randint(0, 100)
+        # detect collision
+        collision = isCollision(enemiesX[i], enemiesY[i], bulletX, bulletY)
+        if collision:
+            bulletState = "ready"
+            bulletY = 480
+            score += 1
+            print(score)
+            enemiesX[i] = random.randint(0, 736)
+            enemiesY[i] = random.randint(0, 100)
     pygame.display.update()
